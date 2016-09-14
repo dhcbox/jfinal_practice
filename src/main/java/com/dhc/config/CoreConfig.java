@@ -7,7 +7,6 @@ import com.dhc.constant.blog.BlogConst;
 import com.dhc.controller.blog.BlogController;
 import com.dhc.controller.index.IndexController;
 import com.dhc.model.Blog;
-import com.dhc.util.QuartzPlugin;
 import com.jfinal.config.Constants;
 import com.jfinal.config.Handlers;
 import com.jfinal.config.Interceptors;
@@ -16,6 +15,7 @@ import com.jfinal.config.Plugins;
 import com.jfinal.config.Routes;
 import com.jfinal.core.JFinal;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
+import com.jfinal.plugin.activerecord.tx.TxByMethodRegex;
 import com.jfinal.plugin.activerecord.tx.TxByMethods;
 import com.jfinal.plugin.druid.DruidPlugin;
 import com.jfinal.plugin.druid.DruidStatViewHandler;
@@ -45,7 +45,8 @@ public class CoreConfig extends JFinalConfig {
 	public void configInterceptor(Interceptors me) {
 
 		me.add(new TxByMethods("find", "update", "delete", "save")); // 声明式事务管理
-
+//		me.add(new TxByMethodRegex("(.*save.*|.*update.*|.*delete.*)"));// 声明式事务管理
+		
 	}
 
 	/** 插件配置 JFinal集成了很多插件：redis,druid,quartz... **/
@@ -73,8 +74,8 @@ public class CoreConfig extends JFinalConfig {
 		me.add(blogRedis);
 
 		/** 定时任务插件 目前配置了一个每5秒钟执行一次的定时脚本 **/
-		QuartzPlugin quartzPlugin = new QuartzPlugin("job.properies");
-		me.add(quartzPlugin);
+//		QuartzPlugin quartzPlugin = new QuartzPlugin("job.properies");
+//		me.add(quartzPlugin);
 
 	}
 

@@ -1,7 +1,5 @@
 package com.dhc.service.blog;
 
-import java.util.HashMap;
-
 import com.dhc.constant.Const;
 import com.dhc.constant.blog.BlogConst;
 import com.dhc.model.Blog;
@@ -14,13 +12,9 @@ public class BlogService {
 
 	public static final BlogService blogService = new BlogService();
 
-	public Page<Blog> paginateBlog(String pageNumber, String pageSize) {
+	public Page<Blog> paginateBlog(int pageNumber, int pageSize) {
 
-		if(StrKit.isBlank(pageNumber) || StrKit.isBlank(pageSize)){
-			return null;
-		}
-		
-		Page<Blog> blogPage = Blog.dao.paginate(Integer.parseInt(pageNumber),Integer.parseInt(pageSize));
+		Page<Blog> blogPage = Blog.dao.paginate(pageNumber,pageSize);
 
 		return blogPage;
 	}
@@ -47,33 +41,23 @@ public class BlogService {
 		return false;
 	}
 
-	public String saveBlog(String title, String content) {
-
-		if (StrKit.isBlank(title)) {
+	public String saveBlog(Blog blog) {
+		if (StrKit.isBlank(blog.getStr("title"))) {
 			return "博客标题不能为空";
 		}
-
-		if (StrKit.isBlank(content)) {
+		if (StrKit.isBlank(blog.getStr("content"))) {
 			return "博客内容不能为空";
 		}
-
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put(BlogConst.TITLE, title);
-		map.put(BlogConst.CONTENT, content);
-
-		boolean flag = Blog.dao._setAttrs(map).save();
+		boolean flag = blog.save();
 		if(flag){
-			 Blog blog = Blog.dao.getLastInsertBlog();
-			 BlogRedis.CacheBlog(blog.getInt(BlogConst.ID), findBlogById(blog.getInt(BlogConst.ID)));
+			 Blog b = Blog.dao.getLastInsertBlog();
+			 BlogRedis.CacheBlog(b.getInt(BlogConst.ID), findBlogById(b.getInt(BlogConst.ID)));
 		}
-		
 		return flag ? "" : "保存失败";
-
 	}
 
-	public boolean updateBlog(int id, String title) {
-		return Blog.dao.set(BlogConst.TITLE, title).set(BlogConst.ID, id)
-				.update();
+	public boolean updateBlog(Blog blog) {
+		return blog.update();
 	}
 
 }

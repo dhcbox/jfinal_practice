@@ -6,7 +6,7 @@ public class IndexController extends Controller{
 	
 	
 	public void index(){
-		renderText("hello JFinal");
+		render("index.html");
 	}
 
 }

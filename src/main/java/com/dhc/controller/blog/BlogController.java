@@ -23,8 +23,14 @@ public class BlogController extends Controller {
 
 		String pageNumber = this.getPara(Const.PAGENUMBER);
 		String pageSize = this.getPara(Const.PAGESIZE);
+		
+		Page<Blog> blogPage = null;
 
-		Page<Blog> blogPage = BlogService.blogService.paginateBlog(pageNumber,pageSize);
+		if(StrKit.isBlank(pageNumber) || StrKit.isBlank(pageSize)){
+			blogPage = BlogService.blogService.paginateBlog(getParaToInt(0, 1),2);
+		}else{
+			blogPage = BlogService.blogService.paginateBlog(Integer.parseInt(pageNumber),Integer.parseInt(pageSize));
+		}
 		
 		if(blogPage == null){
 			ControllerCommon.errorMsg("参数不能为空");
@@ -32,7 +38,23 @@ public class BlogController extends Controller {
 		}
 		
 		logger.info("查找成功");
-		renderJson(ControllerCommon.ctrCommon.returnJsonToClient(blogPage));
+		setAttr("blogPage", blogPage);
+		render("blog.html");
+		
+//		renderJson(ControllerCommon.ctrCommon.returnJsonToClient(blogPage));
+	}
+	
+	/**
+	 * 跳转至新增页面
+	 */
+	public void add(){
+		
+	}
+	/**
+	 * 跳转至修改页面
+	 */
+	public void edit(){
+		setAttr("blog", Blog.dao.findById(getParaToInt()));
 	}
 
 	/**
@@ -71,41 +93,23 @@ public class BlogController extends Controller {
 		renderJson(ControllerCommon.ctrCommon.returnJsonToClient(result));
 	}
 
-	/**
-	 * 添加元素
-	 * 
-	 * 有话要说：对于添加元素，这种方法应该是最容易想到的，但！还有两种方式应该是更加简化代码的 1. 关键代码:Blog blog =
-	 * this.getModel(Blog.class); JFinal可以通过参数名匹配直接组装成“实体类”，然后
-	 * 如果需要判断参数是否正确，可通过blog.getInt(); blog.getStr();等方式校验响应参数，之后进行保存；
-	 * 
-	 * 2.可以通过第三方json工具，把传过来的参数直接转成map，在调用Blog.dao.setAttrs(map).save();也可
-	 */
 	public void save() {
-
-		String title = this.getPara(BlogConst.TITLE);
-		String content = this.getPara(BlogConst.CONTENT);
-
-		String result = BlogService.blogService.saveBlog(title, content);
-
+		String result = BlogService.blogService.saveBlog(getModel(Blog.class));
 		if (!StrKit.isBlank(result)) {
 			ControllerCommon.errorMsg(result);
 		}
-
-		renderJson(ControllerCommon.ctrCommon.returnJsonToClient(result));
+		redirect("/blog");
+		
+//		renderJson(ControllerCommon.ctrCommon.returnJsonToClient(result));
 	}
 
-	/**
-	 * 更新元素
-	 * 
-	 * 1.可以利用第三方json工具，解析请求参数，再进行数据统一处理
-	 */
 	public void update() {
-
-		boolean result = BlogService.blogService.updateBlog(getParaToInt(BlogConst.ID),getPara(BlogConst.TITLE));
+		boolean result = BlogService.blogService.updateBlog(getModel(Blog.class));
 		if (!result) {
 			ControllerCommon.errorMsg("更新失败");
 		}
-
-		renderJson(ControllerCommon.ctrCommon.returnJsonToClient(result));
+		redirect("/blog");
+		
+//		renderJson(ControllerCommon.ctrCommon.returnJsonToClient(result));
 	}
 }
