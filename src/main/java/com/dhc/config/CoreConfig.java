@@ -13,9 +13,7 @@ import com.jfinal.config.Interceptors;
 import com.jfinal.config.JFinalConfig;
 import com.jfinal.config.Plugins;
 import com.jfinal.config.Routes;
-import com.jfinal.core.JFinal;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
-import com.jfinal.plugin.activerecord.tx.TxByMethodRegex;
 import com.jfinal.plugin.activerecord.tx.TxByMethods;
 import com.jfinal.plugin.druid.DruidPlugin;
 import com.jfinal.plugin.druid.DruidStatViewHandler;
@@ -46,6 +44,7 @@ public class CoreConfig extends JFinalConfig {
 
 		me.add(new TxByMethods("find", "update", "delete", "save")); // 声明式事务管理
 //		me.add(new TxByMethodRegex("(.*save.*|.*update.*|.*delete.*)"));// 声明式事务管理
+//		me.addGlobalServiceInterceptor();
 		
 	}
 
@@ -100,8 +99,5 @@ public class CoreConfig extends JFinalConfig {
 		System.out.println("加载完毕");
 	}
 
-	public static void main(String[] args) {
-		JFinal.start("src/main/webapp", 80, "/", 5);
-	}
 
 }

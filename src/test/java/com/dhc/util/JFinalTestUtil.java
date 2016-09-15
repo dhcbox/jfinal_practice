@@ -5,10 +5,6 @@ import org.junit.Test;
 import com.dhc.model.Blog;
 import com.dhc.redis.blog.BlogRedis;
 
-/**
- * @author tian
- * @Time Dec 9, 2015 8:42:34 PM
- */
 public class JFinalTestUtil {
 
 	@Test
