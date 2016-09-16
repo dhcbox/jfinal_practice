@@ -1,5 +1,10 @@
 package com.dhc.constant.blog;
 
+/**
+ * 博客常量类
+ * @author DHC
+ * @version v1.0
+ */
 public class BlogConst {
 	
 	public static final String BLOGTABLE = "blog";

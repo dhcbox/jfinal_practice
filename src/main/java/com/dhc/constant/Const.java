@@ -1,5 +1,10 @@
 package com.dhc.constant;
 
+/**
+ * 常量类
+ * @author DHC
+ * @version v1.0
+ */
 public class Const {
 
 	public static final String SYMBOLCOMMA = ","; // ,

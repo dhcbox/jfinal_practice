@@ -84,13 +84,13 @@ public class BlogController extends Controller {
 	 * 删除元素
 	 */
 	public void delete() {
-
 		boolean result = BlogService.blogService
-				.deleteBlogById(getParaToInt(BlogConst.ID));
+				.deleteBlogById(getParaToInt());
 		if (!result) {
 			ControllerCommon.errorMsg("删除失败");
 		}
-		renderJson(ControllerCommon.ctrCommon.returnJsonToClient(result));
+		redirect("/blog");
+//		renderJson(ControllerCommon.ctrCommon.returnJsonToClient(result));
 	}
 
 	public void save() {
@@ -99,7 +99,6 @@ public class BlogController extends Controller {
 			ControllerCommon.errorMsg(result);
 		}
 		redirect("/blog");
-		
 //		renderJson(ControllerCommon.ctrCommon.returnJsonToClient(result));
 	}
 

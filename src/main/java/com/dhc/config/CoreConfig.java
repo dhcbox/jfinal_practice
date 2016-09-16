@@ -14,87 +14,106 @@ import com.jfinal.config.JFinalConfig;
 import com.jfinal.config.Plugins;
 import com.jfinal.config.Routes;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
-import com.jfinal.plugin.activerecord.tx.TxByMethods;
 import com.jfinal.plugin.druid.DruidPlugin;
 import com.jfinal.plugin.druid.DruidStatViewHandler;
 import com.jfinal.plugin.redis.RedisPlugin;
 
+/**
+ * JFinal核心配置类
+ * @author DHC
+ * @version v1.0
+ */
 public class CoreConfig extends JFinalConfig {
 
-	/** 常量配置 **/
+	/**
+	 * 常量配置方法
+	 */
 	@Override
 	public void configConstant(Constants me) {
 		loadPropertyFile("a_little_config.txt");
-		// 设置开发模式
 		me.setDevMode(getPropertyToBoolean("devMode", true));
 		me.setUrlParaSeparator(Const.SYMBOLAMPERSAND);
 	}
-
-	/** 处理器配置 接管所有web请求，可在此层做功能性的拓展 **/
+	
+	/**
+	 * 路由配置方法
+	 * 1、写个类如：BlogRoute继承Routes，配置me.add(new BlogRoute());
+	 * 2、第三个参数可通过注解@ActionKey("/index")方式
+	 */
 	@Override
-	public void configHandler(Handlers me) {
-		DruidStatViewHandler dvh = new DruidStatViewHandler("/druid");
-		me.add(dvh);
-
+	public void configRoute(Routes me) {
+		me.add("/", IndexController.class, "/index");
+		me.add("/blog", BlogController.class);
 	}
 
-	/** 拦截器配置 类似与struts2拦截器，处理action **/
-	@Override
-	public void configInterceptor(Interceptors me) {
-
-		me.add(new TxByMethods("find", "update", "delete", "save")); // 声明式事务管理
-//		me.add(new TxByMethodRegex("(.*save.*|.*update.*|.*delete.*)"));// 声明式事务管理
-//		me.addGlobalServiceInterceptor();
-		
-	}
-
-	/** 插件配置 JFinal集成了很多插件：redis,druid,quartz... **/
+	/**
+	 * 插件配置方法
+	 * 本项目中集成了druid\redis\quartz
+	 */
 	@Override
 	public void configPlugin(Plugins me) {
-
-		/** 数据库监控druid **/
+		//数据库监控插件druid
 		DruidPlugin dp = new DruidPlugin(getProperty("jdbcUrl"), getProperty("user"), getProperty("password"));
-		dp.addFilter(new StatFilter()); // sql监控
-		dp.addFilter(new WallFilter()); // 防止sql注入
-		// dp.addFilter(new WebStatFilter());
+		// sql监控
+		dp.addFilter(new StatFilter()); 
+		// 防止sql注入
+		dp.addFilter(new WallFilter()); 
 		WallFilter wall = new WallFilter();
-		wall.setDbType("mysql"); // mysql
+		wall.setDbType("mysql"); 
 		dp.addFilter(wall);
 		me.add(dp);
 
 		ActiveRecordPlugin arp = new ActiveRecordPlugin(dp);
 		me.add(arp);
 
-		// 表映射关系
 		arp.addMapping(BlogConst.BLOGTABLE, "id", Blog.class);
 
-		/** redis缓存支持根据不同模块使用缓存，目前我创建一个关于blog的缓存块 **/
+		//redis缓存支持根据不同模块使用缓存，目前我创建一个关于blog的缓存块
 		RedisPlugin blogRedis = new RedisPlugin(BlogConst.BLOGTABLE, "localhost");
 		me.add(blogRedis);
 
-		/** 定时任务插件 目前配置了一个每5秒钟执行一次的定时脚本 **/
+		//定时任务插件 目前配置了一个每5秒钟执行一次的定时脚本
 //		QuartzPlugin quartzPlugin = new QuartzPlugin("job.properies");
 //		me.add(quartzPlugin);
 
 	}
-
-	/** 路由配置：1.如下配置；2.写个类如：BlogRoute继承Routes，配置，me.add(new BlogRoute());也可 **/
-	/** 路径设置：1.第三个参数；2.可通过注解@ActionKey("/index")方式 **/
+	
+	/**
+	 * 拦截器配置方法 
+	 * 类似与struts2拦截器，处理action
+	 */
 	@Override
-	public void configRoute(Routes me) {
+	public void configInterceptor(Interceptors me) {
 
-		me.add("/", IndexController.class, "/index");
-		/** controller配置路径 **/
-		me.add("/blog", BlogController.class);
+//		me.add(new TxByMethods("find", "update", "delete", "save")); // 声明式事务管理
+//		me.add(new TxByMethodRegex("(.*save.*|.*update.*|.*delete.*)"));// 声明式事务管理
+//		me.addGlobalServiceInterceptor(xx);
+		
+	}
+	
+	
+	/** 
+	 * 处理配置方法 
+	 * 接管所有web请求，可在此层做功能性的拓展
+	 */
+	@Override
+	public void configHandler(Handlers me) {
+		DruidStatViewHandler dvh = new DruidStatViewHandler("/druid");
+		me.add(dvh);
 
 	}
+	
 
-	/* 插件关闭之前【方法可选择性使用】 **/
+	/**
+	 * 插件关闭之前【方法可选择性使用】
+	 */
 	public void beforeJFinalStop() {
 		System.out.println("插件关闭");
 	}
 
-	/* 插件加载完后【方法可选择性使用】 **/
+	/**
+	 * 插件加载完后【方法可选择性使用】
+	 */
 	public void afterJFinalStart() {
 		System.out.println("加载完毕");
 	}

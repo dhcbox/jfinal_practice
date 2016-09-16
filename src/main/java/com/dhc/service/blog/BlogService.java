@@ -41,6 +41,7 @@ public class BlogService {
 		return false;
 	}
 
+	
 	public String saveBlog(Blog blog) {
 		if (StrKit.isBlank(blog.getStr("title"))) {
 			return "博客标题不能为空";

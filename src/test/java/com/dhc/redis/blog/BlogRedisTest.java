@@ -3,7 +3,7 @@ package com.dhc.redis.blog;
 import org.junit.Test;
 
 import com.dhc.constant.blog.BlogConst;
-import com.jfinal.plugin.redis.Cache;
+import com.dhc.model.Blog;
 import com.jfinal.plugin.redis.RedisPlugin;
 
 public class BlogRedisTest {
@@ -14,11 +14,11 @@ public class BlogRedisTest {
 	}
 	
 	@Test
-	public void testGetCache(){
+	public void testGetBlogFromCache(){
 		RedisPlugin rp = new RedisPlugin(BlogConst.BLOGTABLE, "localhost");
 		rp.start();
-		Cache ca = BlogRedis.getCache();
-		System.out.println(ca);
+		Blog blog = BlogRedis.getBlogFromCache(10);
+		System.out.println(blog);
 	}
 
 }
