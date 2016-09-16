@@ -5,9 +5,12 @@ import com.dhc.constant.blog.BlogConst;
 import com.dhc.model.Blog;
 import com.dhc.redis.blog.BlogRedis;
 import com.dhc.util.BeanUtil;
+import com.jfinal.aop.Before;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
+@Before(Tx.class)
 public class BlogService {
 
 	public static final BlogService blogService = new BlogService();
