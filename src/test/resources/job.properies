@@ -1,0 +1,3 @@
+a.job=com.dhc.job.JobDemo
+a.cron=*/5 * * * * ?
+a.enable=true
